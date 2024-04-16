@@ -14,12 +14,13 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_srvs
   cv_bridge
+  image_transport
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
-find_package(OpenCV 4 REQUIRED)
+
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
@@ -106,9 +107,9 @@ find_package(OpenCV 4 REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
- INCLUDE_DIRS include
- LIBRARIES robot_gui
- CATKIN_DEPENDS geometry_msgs nav_msgs robotinfo_msgs roscpp std_srvs
+  INCLUDE_DIRS include
+  LIBRARIES robot_gui
+  CATKIN_DEPENDS geometry_msgs nav_msgs robotinfo_msgs roscpp std_srvs 
 #  DEPENDS system_lib
 )
 
@@ -119,14 +120,17 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-include
+  include
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-add_library(robot_gui_lib
-  src/gui_subscribe.cpp
-)
+ add_library(robot_gui_lib
+   src/robot_gui_class.cpp	
+   )
+
+ 
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -136,7 +140,10 @@ add_library(robot_gui_lib
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(robot_gui_node src/main_robot_gui.cpp)
+ add_executable(robot_gui_node 
+ 				src/robot_gui_main.cpp
+				)
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -149,10 +156,10 @@ add_executable(robot_gui_node src/main_robot_gui.cpp)
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(robot_gui_node
-	robot_gui_lib
-  ${catkin_LIBRARIES}
-)
+ target_link_libraries(robot_gui_node
+   ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} robot_gui_lib 
+ )
+
 
 #############
 ## Install ##
